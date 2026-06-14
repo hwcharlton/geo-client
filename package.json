@@ -1,6 +1,6 @@
 {
   "name": "@hwcharlton/geo-client",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Browser-facing fetch + decode client for the @hwcharlton geo-data ecosystem: loads baked TopoJSON area packs and decodes them into GeoJSON FeatureCollections + source attribution (ADR-012).",
   "type": "module",
   "exports": {
@@ -21,7 +21,7 @@
   "author": "Henry Charlton",
   "license": "ISC",
   "dependencies": {
-    "@hwcharlton/geo-model": "^0.2.0",
+    "@hwcharlton/geo-model": "^0.3.1",
     "topojson-client": "^3.1.0"
   },
   "devDependencies": {

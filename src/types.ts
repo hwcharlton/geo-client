@@ -28,7 +28,10 @@ export interface PackRef {
   ward: string;
   /** Layer name — one of geo-model's {@link LayerKind}s (e.g. `"admin"`). */
   layer: LayerKind | (string & {});
-  /** Detail tier — geo-model's {@link DetailTier} (`"high" | "med" | "low"`). */
+  /**
+   * Detail tier — geo-model's {@link DetailTier} (`"high" | "med" | "low"` for
+   * area packs; `"flat"` for the single un-tiered building layer).
+   */
   detail: DetailTier;
 }
 
