@@ -9,7 +9,11 @@
  */
 import type { FeatureCollection, Geometry } from "geojson";
 import type { Topology, GeometryCollection } from "topojson-specification";
-import type { LayerKind } from "@hwcharlton/geo-model";
+import type {
+  AreaPackManifest,
+  DetailTier,
+  LayerKind,
+} from "@hwcharlton/geo-model";
 
 /**
  * A reference to a single baked area pack: a ward, one render/data layer
@@ -24,44 +28,22 @@ export interface PackRef {
   ward: string;
   /** Layer name — one of geo-model's {@link LayerKind}s (e.g. `"admin"`). */
   layer: LayerKind | (string & {});
-  /** Detail tier. */
-  detail: "high" | "med" | "low";
+  /** Detail tier — geo-model's {@link DetailTier} (`"high" | "med" | "low"`). */
+  detail: DetailTier;
 }
 
 /**
- * The baked per-artifact manifest written next to each pack (`geo-area-pack/1`
- * shape, ADR-016). Only the fields the client reads are typed here; the full
- * provenance manifest lives in `@hwcharlton/geo-model` (`ArtifactManifest`).
+ * The baked per-artifact manifest written next to each pack: the
+ * `geo-area-pack/1` on-disk WIRE shape, owned by `@hwcharlton/geo-model` as the
+ * single source of truth shared between the `geo-build` producer and this
+ * consumer (ADR-013 / ADR-016).
+ *
+ * Re-exported here under the historical `PackManifest` name so this package's
+ * public API stays stable; it is now exactly geo-model's
+ * {@link AreaPackManifest}. The client reads `source.attribution`,
+ * `artifact.file`, and `artifact.file_raw` — all required on that type.
  */
-export interface PackManifest {
-  readonly schema?: string;
-  /** Where the data came from; `attribution` is surfaced to end users. */
-  readonly source: {
-    readonly name: string;
-    readonly license: string;
-    /** e.g. `"© OpenStreetMap contributors"`. */
-    readonly attribution: string;
-    readonly input_file?: string;
-    readonly input_provider?: string;
-    readonly input_date?: string;
-  };
-  /**
-   * The artifact bytes. `file` is the served (compressed) artifact — the
-   * content-hashed `.br`; `file_raw` is the bare uncompressed `.topo.json`
-   * alias (per ADR-016 the public tier serves both).
-   */
-  readonly artifact: {
-    /** The primary (compressed) artifact filename, e.g. `high.<hash>.topo.json.br`. */
-    readonly file: string;
-    /** The raw uncompressed alias, e.g. `high.topo.json`. */
-    readonly file_raw?: string;
-    readonly bytes_topojson?: number;
-    readonly bytes_brotli?: number;
-    readonly hash_algo?: string;
-    readonly hash_topojson?: string;
-    readonly hash_brotli?: string;
-  };
-}
+export type PackManifest = AreaPackManifest;
 
 /** What {@link decodePack} hands back to a consumer (e.g. `geo-canvas`). */
 export interface DecodedPack {

@@ -10,6 +10,7 @@
  * `preferRaw` (or a manifest whose `file` is already raw) at the uncompressed
  * alias just parses the bytes directly.
  */
+import { packPaths } from "@hwcharlton/geo-model";
 import type { Topology } from "topojson-specification";
 import type { LoadTopology, PackManifest, PackRef } from "./types.js";
 
@@ -57,14 +58,14 @@ export function makeBrowserLoader(
 
   return async (packRef: PackRef, loadOptions = {}) => {
     const { signal } = loadOptions;
-    const dir = `${base}/packs/${packRef.ward}/${packRef.layer}`;
+    // Repo-relative path layout from geo-model (`packs/<ward>/<layer>/…`, no
+    // leading slash); composed after our trailing-slash-stripped base, which
+    // reproduces the previous `${base}/packs/…` URLs byte-for-byte.
+    const paths = packPaths(packRef.ward, packRef.layer, packRef.detail);
 
-    const manifestRes = await deps.fetch(
-      `${dir}/${packRef.detail}.manifest.json`,
-      {
-        signal,
-      },
-    );
+    const manifestRes = await deps.fetch(`${base}/${paths.manifest}`, {
+      signal,
+    });
     if (!manifestRes.ok) {
       throw new Error(
         `geo-client: manifest fetch failed (${manifestRes.status}) for ${packRef.ward}/${packRef.layer}/${packRef.detail}`,
@@ -78,10 +79,11 @@ export function makeBrowserLoader(
         ? rawFile
         : manifest.artifact.file;
 
-    const artifactRes = await deps.fetch(`${dir}/${file}`, { signal });
+    const artifactUrl = `${base}/${paths.artifact(file)}`;
+    const artifactRes = await deps.fetch(artifactUrl, { signal });
     if (!artifactRes.ok) {
       throw new Error(
-        `geo-client: artifact fetch failed (${artifactRes.status}) for ${dir}/${file}`,
+        `geo-client: artifact fetch failed (${artifactRes.status}) for ${artifactUrl}`,
       );
     }
 
