@@ -14,6 +14,14 @@
  *
  *   - {@link decodePack} — `(deps, packRef, options?)` → decoded pack.
  *   - {@link makeBrowserLoader} — build a `loadTopology` from `fetch` + brotli.
+ *
+ * The PLATEAU authoritative building tier (Phase-09 Stage 2) is an additive,
+ * mesh-tiled fetch path layered on the same injected brotli/loader seam:
+ *
+ *   - {@link fetchPlateauIndex} — fetch + parse `plateau/index.json`.
+ *   - {@link decodePlateauMesh} — decode one mesh pack → building Features with
+ *     `height` + `source` + attribution.
+ *   - {@link plateauMeshRef} / {@link resolvePlateauPackUrl} — address the tier.
  */
 export {
   decodePack,
@@ -26,6 +34,24 @@ export {
   type BrowserLoaderDeps,
   type BrowserLoaderOptions,
 } from "./loader.js";
+
+export {
+  fetchPlateauIndex,
+  decodePlateauMesh,
+  plateauMeshRef,
+  resolvePlateauPackUrl,
+  plateauMeshObjectName,
+  type PlateauMeshIndex,
+  type PlateauMeshEntry,
+  type PlateauMeshRef,
+  type PlateauBuildingFeature,
+  type PlateauBuildingProperties,
+  type DecodedPlateauMesh,
+  type FetchPlateauIndexDeps,
+  type FetchPlateauIndexOptions,
+  type DecodePlateauMeshDeps,
+  type DecodePlateauMeshOptions,
+} from "./plateau.js";
 
 export type {
   PackRef,
